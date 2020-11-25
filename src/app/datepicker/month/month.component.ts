@@ -1,14 +1,12 @@
-// Core Imports
-import { Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 
-// Component Decorator
 @Component({
   selector: 'app-month',
   templateUrl: './month.component.html'
 })
-export class MonthComponent {
+export class MonthComponent implements OnInit {
   @Output() notify: EventEmitter<any[]> = new EventEmitter<any[]>();
-  @Input() monthData: any;
+  @Input() monthData: any[];
   @Input() selectedDate: any;
   @Input() month: string;
   @Input() year: string;
@@ -16,8 +14,13 @@ export class MonthComponent {
 
   weekDays: any[];
 
-  // Consructor
+  @Input() startingDayIndex: number;
+
   constructor() {
+
+  }
+
+  ngOnInit() {
     this.weekDays = ['आइत', 'सोम', 'मगल', 'बुध', 'बिहि', 'शुक्र', 'शनि'];
   }
 
@@ -41,7 +44,29 @@ export class MonthComponent {
    * Selects date and send to to the listener
    * @param  {Object} date
    */
-  selectDate (date) {
-    this.notify.emit([date.np, this.month, this.year]);
+  selectDate(date) {
+    this.notify.emit([date, this.month, this.year]);
+  }
+
+  createRange() {
+
+    var noOfDaysInMonth = this.monthData.length;
+    var firstDayIndexInAWeek = this.startingDayIndex;
+
+    var weeksCountInAMonth = Math.ceil((firstDayIndexInAWeek + noOfDaysInMonth) / 7);
+
+    var items: number[] = [];
+    for (var i = 1; i <= weeksCountInAMonth; i++) {
+      items.push(i);
+    }
+    return items;
+  }
+
+  createDayRangeInWeek() {
+    var items: number[] = [];
+    for (var i = 1; i <= 7; i++) {
+      items.push(i);
+    }
+    return items;
   }
 }

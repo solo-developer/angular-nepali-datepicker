@@ -1,18 +1,24 @@
 <table cellspacing="0" class="calendar-content">
   <thead>
     <tr>
-      <td  *ngFor="let day of weekDays">{{day}}</td>
+      <td *ngFor="let day of weekDays">{{day}}</td>
     </tr>
   </thead>
   <tbody id="tbody">
-    <tr *ngFor="let week of weeklyChunk(monthData, 7)">
-      <td class='day'
-        [ngClass]="{'active': day == monthDay.np && selectedDate.month == month && selectedDate.year == year}"
-        *ngFor="let monthDay of week"
-        (click)='selectDate(monthDay)'>
-        <div class='np'>{{monthDay.np}}</div>
-        <div class='en'>{{monthDay.en}}</div>
-      </td>
+
+    <tr *ngFor="let week of createRange();let weekDay=index">
+      <ng-container *ngFor="let dayCount of createDayRangeInWeek()">
+        <td class='day' *ngIf="(weekDay*7+dayCount)>startingDayIndex && (weekDay*7+dayCount-startingDayIndex)<=monthData.length" (click)='selectDate(weekDay*7+dayCount-startingDayIndex)'>
+          <ng-container>
+            <div class='np'>{{weekDay*7+dayCount-startingDayIndex}}</div>
+          </ng-container>
+        </td>
+        <td *ngIf="(weekDay*7+dayCount)<=startingDayIndex || (weekDay*7+dayCount-startingDayIndex)>monthData.length">
+          <div class='np'></div>
+        </td>
+      </ng-container>
     </tr>
   </tbody>
 </table>
+
+

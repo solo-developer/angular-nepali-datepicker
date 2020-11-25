@@ -1,13 +1,15 @@
 <div id="nepali-datepicker" #eRef>
 
   <!-- Dateficker field -->
-  <div [formGroup]="form">
-    <input type="text" class="form-control" [value]="date || field.value" [name]="field.key" [id]="field.key"
-      [placeholder]="field.placeholder" (focus)="showCalendar()" />
-  </div>
+    <div class="input-group">
+      <input type="text" class="form-control form-control-sm" (focus)="showCalendar()" placeholder="yyyy-mm-dd" [(ngModel)]="value" readonly />
+      <div class="input-group-append">
+        <button class="btn  btn-outline-light calendar" (click)="showCalendar()" type="button"><i class="fa fa-calendar"></i></button>
+      </div>
+    </div>
 
   <!-- Datepicker popup -->
-  <div id="calendar" *ngIf="!isCalendarHidden" #calendar>
+  <div id="calendar" *ngIf="!isCalendarHidden" class="col-md-4" #calendar>
     <!-- Menu -->
     <div class="calendar-nav">
       <table class="calendar-menu">
@@ -33,7 +35,7 @@
     </div>
 
     <!-- Calendar <app-month></app-month> component-->
-    <app-month [monthData]='monthData' [year]='year' [month]='month' [day]='day' [selectedDate]='selectedDate' (notify)='onNotify($event)'></app-month>
+    <app-month [monthData]='monthData' [year]='year' [month]='month' [day]='day' [selectedDate]='selectedDate' (notify)='onNotify($event)' [startingDayIndex]="startingDayIndex"></app-month>
 
     <!-- Loading mask -->
     <div class="overlay" *ngIf="isLoading">

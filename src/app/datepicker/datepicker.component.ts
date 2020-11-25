@@ -1,26 +1,27 @@
-// Core imports
-import { Component, EventEmitter, OnInit, Output, Input, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-
-// Services
+import { Component, EventEmitter, OnInit, Output, ViewChild, ElementRef, HostListener } from '@angular/core';
+import * as englishmonthday from './english-month-day.model';
 import { CalendarService } from './calendar.service';
+import { of } from 'rxjs/observable/of';
+import * as dateDatas from '../../../data/datas.json';
 
-// Component Decorator
+
 @Component({
-  selector: 'app-datepicker',
+  selector: 'nepali-datepicker',
   templateUrl: './datepicker.component.html',
+  styleUrls: ['./datepicker.component.scss'],
   providers: [CalendarService]
 })
-export class DatepickerComponent implements OnInit {
-  @ViewChild('eRef') eRef: ElementRef;
-  @ViewChild('calendar') calendar: ElementRef;
+export class NepaliDatepickerComponent implements OnInit {
 
-  @Input() form: FormGroup;
-  @Input() field: any;
-  @Input() id: string;
-  @Input() value: string;
 
-  @Output() callback = new EventEmitter<any>();
+  @Output() notifydateChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+
+  @ViewChild('eRef', {static: false}) eRef: ElementRef;
+  @ViewChild('calendar', {static: false}) calendar: ElementRef;
+
+  value: string = '';
+  engmonth = englishmonthday.EnglishMonthDay;
+
 
   // variable declerations
   fetchedYear: any;
@@ -47,6 +48,8 @@ export class DatepickerComponent implements OnInit {
   isCalendarHidden: boolean;
   isLoading: boolean;
 
+  startingDayIndex: number;
+
   // Dicument click handler
   @HostListener('document:click', ['$event'])
   clickout(event) {
@@ -63,7 +66,7 @@ export class DatepickerComponent implements OnInit {
    * Datepicker Component Constructor
    * @param  {CalendarService} CalendarService
    */
-  constructor(public CalendarService: CalendarService) {
+  constructor(private calendarService: CalendarService) {
     this.monthData = [];
     this.years = [];
 
@@ -71,8 +74,8 @@ export class DatepickerComponent implements OnInit {
     this.month = 'Ashwin';
     this.year = '2070';
 
-    this.maxYear = '2072';
-    this.minYear = '2070';
+    this.maxYear = '2090';
+    this.minYear = '2003';
 
     this.months = [
       'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
@@ -93,7 +96,7 @@ export class DatepickerComponent implements OnInit {
   }
 
   // On Component Initialiazation
-  ngOnInit () {
+  ngOnInit() {
     if (this.value) {
       const selected: any = this.value.split(' ');
       const date: any = selected.toString().split(',');
@@ -109,10 +112,10 @@ export class DatepickerComponent implements OnInit {
    * @param data
    */
   callParent(data) {
-    this.callback.emit({
-      key: this.id,
-      data: data
-    });
+    // this.callback.emit({
+    //   key: this.id,
+    //   data: data
+    // });
   }
 
   /**
@@ -125,81 +128,87 @@ export class DatepickerComponent implements OnInit {
     this.day = data[0];
     this.callParent(this.date);
     this.hideCalendar();
+
+    let selectedMonth = this.engmonth.monthNumbr(data[1]);
+    this.notifydateChange.emit([data[0], selectedMonth, data[2]]);
+    this.value = data[2] + '-' + selectedMonth + '-' + data[0];
   }
 
   /**
    * Load the select options for year and months dropdowns
    */
   loadDropDowns() {
-    for (let i = parseInt(this.minYear); i <= parseInt(this.maxYear); i++){
-  		this.years.push(i);
-  	}
+    for (let i = parseInt(this.minYear); i <= parseInt(this.maxYear); i++) {
+      this.years.push(i);
+    }
   }
 
   /**
    * Populates the month data in the calendar month view
    * @param  {string} month
    */
-  loadData(month){
+  loadData(month) {
     this.monthData = this.fetchedYear[month];
+    var weekDays = ['आइत', 'सोम', 'मगल', 'बुध', 'बिहि', 'शुक्र', 'शनि'];
+    this.startingDayIndex = weekDays.indexOf(this.monthData[0].bar);
   }
+
+  DataObservable = of(dateDatas);
 
   /**
    * Get the year's data  and populate the data to the calander
    */
   fetchData(year) {
-    const dataUrl = 'https://raw.githubusercontent.com/bmnepali/angular-nepali-datepicker/master/data/' + year + '.json';
-
     this.isLoading = true;
-    this.CalendarService.getCalendar(dataUrl)
-      .subscribe (
-        (response) => {
-          this.fetchedYear = response;
-          this.loadData(this.month);
-          this.isLoading = false;
-        },
-        (error) => console.log(error)
-      );
+
+    this.DataObservable.subscribe(
+      (response) => {
+        this.fetchedYear = (response as any).default[year];
+        this.loadData(this.month);
+        this.isLoading = false;
+      },
+      (error) => console.log(error)
+    );
   }
 
   /**
    * Handler for next button click in caledar
    */
-  nextMonth () {
+  nextMonth() {
     let index = this.months.indexOf(this.month);
 
-  	if (index < 11){
+    if (index < 11) {
       this.month = this.months[++index];
-  		this.loadData(this.months[index]);
-  	} else {
-  		if ((parseInt(this.year) + 1) <= parseInt(this.maxYear)){
+      this.loadData(this.months[index]);
+    } else {
+      if ((parseInt(this.year) + 1) <= parseInt(this.maxYear)) {
         this.year = (parseInt(this.year) + 1).toString();
         this.month = this.months[0];
-  			this.fetchData(this.year);
-  		} else {
+        this.fetchData(this.year);
+      } else {
         console.log('Unavailable next year' + (parseInt(this.year) + 1) + ' max : ' + this.maxYear);
       }
-  	}
+    }
   }
 
   /**
    * Handler for previous button click in caledar
    */
-  previousMonth () {
+  previousMonth() {
     let index = this.months.indexOf(this.month);
 
-    if (index >= 1){
+    if (index >= 1) {
       this.month = this.months[--index];
-  		this.loadData(this.months[index]);
-  	} else {
-  		if ((parseInt(this.year) - 1) >= parseInt(this.minYear)){
+      this.loadData(this.months[index]);
+    } else {
+      if ((parseInt(this.year) - 1) >= parseInt(this.minYear)) {
         this.year = (parseInt(this.year) - 1).toString();
         this.month = this.months[11];
-  			this.fetchData(this.year);
-  		} else {
+        this.fetchData(this.year);
+      } else {
         console.log('Unavailable previous date');
       }
-  	}
+    }
   }
 
   /**
@@ -235,3 +244,5 @@ export class DatepickerComponent implements OnInit {
     return this.loadData(month);
   }
 }
+
+
