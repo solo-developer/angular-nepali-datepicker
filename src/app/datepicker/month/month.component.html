@@ -8,9 +8,9 @@
 
     <tr *ngFor="let week of createRange();let weekDay=index">
       <ng-container *ngFor="let dayCount of createDayRangeInWeek()">
-        <td class='day' *ngIf="(weekDay*7+dayCount)>startingDayIndex && (weekDay*7+dayCount-startingDayIndex)<=monthData.length" (click)='selectDate(weekDay*7+dayCount-startingDayIndex)'>
+        <td class='day' [class.selected]='isDaySelected(weekDay*7+dayCount-startingDayIndex)' *ngIf="(weekDay*7+dayCount)>startingDayIndex && (weekDay*7+dayCount-startingDayIndex)<=monthData.length" (click)='selectDate(weekDay*7+dayCount-startingDayIndex)'>
           <ng-container>
-            <div class='np'>{{weekDay*7+dayCount-startingDayIndex}}</div>
+            <div [class.np]="true" >{{weekDay*7+dayCount-startingDayIndex}}</div>
           </ng-container>
         </td>
         <td *ngIf="(weekDay*7+dayCount)<=startingDayIndex || (weekDay*7+dayCount-startingDayIndex)>monthData.length">

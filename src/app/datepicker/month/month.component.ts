@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-month',
-  templateUrl: './month.component.html'
+  templateUrl: './month.component.html',
+  styleUrls: ['./month.component.scss'],
 })
 export class MonthComponent implements OnInit {
   @Output() notify: EventEmitter<any[]> = new EventEmitter<any[]>();
@@ -68,5 +69,9 @@ export class MonthComponent implements OnInit {
       items.push(i);
     }
     return items;
+  }
+
+  isDaySelected(day){
+    return day==this.day;
   }
 }
