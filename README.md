@@ -7,11 +7,10 @@ This is the angular 8 nepali date picker project, custom built for nepali date p
 Use the datepicker component as following in your desired angular component.
 
 ```html
-<!-- <app-datepicker></app-datepicker> Component -->
-<app-datepicker 
+<nepali-datepicker 
   [value]='field.value' 
   (callback)="update($event)">
-</app-datepicker>
+</nepali-datepicker>
 ```
 
 ## Running this demo app in your local machine:
