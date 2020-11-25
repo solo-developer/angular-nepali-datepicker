@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, ElementRef, HostListener, Input } from '@angular/core';
 import * as englishmonthday from './english-month-day.model';
 import { CalendarService } from './calendar.service';
 import { of } from 'rxjs/observable/of';
@@ -13,16 +13,14 @@ import * as dateDatas from '../../../data/datas.json';
 })
 export class NepaliDatepickerComponent implements OnInit {
 
-
-  @Output() notifydateChange: EventEmitter<any[]> = new EventEmitter<any[]>();
-
+  @Output() callback: EventEmitter<any> = new EventEmitter<any>();
+  @Input() defaultDate:string;
   @ViewChild('eRef', {static: false}) eRef: ElementRef;
   @ViewChild('calendar', {static: false}) calendar: ElementRef;
-
-  value: string = '';
+  
   engmonth = englishmonthday.EnglishMonthDay;
 
-
+  value:string="";
   // variable declerations
   fetchedYear: any;
   date: string;
@@ -50,7 +48,7 @@ export class NepaliDatepickerComponent implements OnInit {
 
   startingDayIndex: number;
 
-  // Dicument click handler
+  // Document click handler
   @HostListener('document:click', ['$event'])
   clickout(event) {
     if (this.eRef && this.eRef.nativeElement.contains(event.target)) {
@@ -97,25 +95,16 @@ export class NepaliDatepickerComponent implements OnInit {
 
   // On Component Initialiazation
   ngOnInit() {
-    if (this.value) {
-      const selected: any = this.value.split(' ');
-      const date: any = selected.toString().split(',');
+   if(this.defaultDate){
+      const selected: any[] = this.defaultDate.split('-');
+      this.year = selected[0];
+      let monthIndex= +(selected[1])-1;
+      this.month =this.months[monthIndex];
+      this.day = selected[2];
 
-      this.selectedDate.day = this.day = date[0];
-      this.selectedDate.month = this.month = date[1];
-      this.selectedDate.year = this.year = date[3];
-    }
-  }
-
-  /**
-   * Updates datepicker value
-   * @param data
-   */
-  callParent(data) {
-    // this.callback.emit({
-    //   key: this.id,
-    //   data: data
-    // });
+      this.value= this.defaultDate;
+   }
+     
   }
 
   /**
@@ -126,11 +115,14 @@ export class NepaliDatepickerComponent implements OnInit {
   onNotify(data: any[]) {
     this.date = data[0] + ' ' + data[1] + ', ' + data[2];
     this.day = data[0];
-    this.callParent(this.date);
     this.hideCalendar();
 
     let selectedMonth = this.engmonth.monthNumbr(data[1]);
-    this.notifydateChange.emit([data[0], selectedMonth, data[2]]);
+    this.callback.emit({
+     date: data[0],
+     month:  selectedMonth,
+      year:  data[2]
+    });
     this.value = data[2] + '-' + selectedMonth + '-' + data[0];
   }
 
@@ -158,7 +150,7 @@ export class NepaliDatepickerComponent implements OnInit {
   /**
    * Get the year's data  and populate the data to the calander
    */
-  fetchData(year) {
+  fetchData(year:number) {
     this.isLoading = true;
 
     this.DataObservable.subscribe(
@@ -184,7 +176,7 @@ export class NepaliDatepickerComponent implements OnInit {
       if ((parseInt(this.year) + 1) <= parseInt(this.maxYear)) {
         this.year = (parseInt(this.year) + 1).toString();
         this.month = this.months[0];
-        this.fetchData(this.year);
+        this.fetchData(parseInt(this.year));
       } else {
         console.log('Unavailable next year' + (parseInt(this.year) + 1) + ' max : ' + this.maxYear);
       }
@@ -204,7 +196,7 @@ export class NepaliDatepickerComponent implements OnInit {
       if ((parseInt(this.year) - 1) >= parseInt(this.minYear)) {
         this.year = (parseInt(this.year) - 1).toString();
         this.month = this.months[11];
-        this.fetchData(this.year);
+        this.fetchData(parseInt(this.year));
       } else {
         console.log('Unavailable previous date');
       }
@@ -216,7 +208,7 @@ export class NepaliDatepickerComponent implements OnInit {
    */
   showCalendar() {
     this.isCalendarHidden = false;
-    return this.fetchData(this.year);
+    return this.fetchData(parseInt(this.year));
   }
 
   /**
@@ -231,8 +223,8 @@ export class NepaliDatepickerComponent implements OnInit {
    * @param  {string} year
    * @return {object}
    */
-  onYearChange(year) {
-    this.fetchData(year);
+  onYearChange(year :string) {
+    this.fetchData(parseInt(year));
   }
 
   /**

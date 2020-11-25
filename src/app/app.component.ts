@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title: string;
+  defaultDate:string='2077-08-10';
 
   /**
    * AppComponemt Constructor
@@ -14,5 +15,9 @@ export class AppComponent {
    */
   constructor() {
     this.title = 'Nepali Date Picker';
+  }
+
+  OnDateChanged(event:any){
+      console.log(event);
   }
 }
