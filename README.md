@@ -1,6 +1,6 @@
 # Angular Nepali Date Picker
 
-This is the angular 5 nepali date picker project, custom built for nepali date picking functionality.
+This is the angular 8 nepali date picker project, custom built for nepali date picking functionality with real data till 2090 BS.
 
 ## Usage:
 
@@ -9,26 +9,15 @@ Use the datepicker component as following in your desired angular component.
 ```html
 <!-- <app-datepicker></app-datepicker> Component -->
 <app-datepicker 
-  [id]="field.key" 
-  [field]='field' 
-  [form]='form' 
   [value]='field.value' 
   (callback)="update($event)">
 </app-datepicker>
 ```
 
-## Demo App GIF:
-
-http://recordit.co/iicazxck75
-
-## More on using this demo app:
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.5.
-
 ## Running this demo app in your local machine:
 
 1. Clone this repo:
-   - `git clone https://github.com/bmnepali/angular-nepali-datepicker.git`
+   - `git clone https://github.com/solo-developer/angular-nepali-datepicker.git`
 
 2. Go to `angular-nepali-datepicker` directory:
    - `cd angular-nepali-datepicker`
@@ -43,11 +32,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-- Run `ng generate component component-name` to generate a new component. 
-- You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
 ## Build
 
 - Run `ng build` to build the project. 
@@ -56,3 +40,12 @@ The app will automatically reload if you change any of the source files.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## About Repo
+
+This repo is forked from https://github.com/bmnepali/angular-nepali-datepicker and credit to Buddha Man Nepali. 
+
+## Changes
+1. Upgraded angular version from 5 to 8.
+2. Used real datas instead of mock ones.
+3. Minor bug fixes and css customisations.
