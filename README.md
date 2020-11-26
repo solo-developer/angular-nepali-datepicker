@@ -48,3 +48,4 @@ This repo is forked from https://github.com/bmnepali/angular-nepali-datepicker a
 1. Upgraded angular version from 5 to 8.
 2. Used real datas instead of mock ones.
 3. Minor bug fixes and css customisations.
+4. Code unrelated to datepicker removed
